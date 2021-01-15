@@ -2,7 +2,7 @@
 <div class="container">
   <div class="py-5 text-center">
     <h2>Welcome</h2>
-    <p class="lead">Name has invited you to buy these item(s).</p>
+    <p class="lead">{{ user.first_name }} {{ user.last_name }} has invited you to buy these item(s).</p>
   </div>
 
   <div class="row">
@@ -11,13 +11,22 @@
         <span class="text-muted">Products</span>
       </h4>
       <ul class="list-group mb-3">
-        <li class="list-group-item d-flex justify-content-between lh-condensed">
+        <template v-for="(product, i) in products">
+        <li class="list-group-item d-flex justify-content-between lh-condensed" :key="i">
           <div>
-            <h6 class="my-0">Product name</h6>
-            <small class="text-muted">Brief description</small>
+            <h6 class="my-0">{{ product.title }}</h6>
+            <small class="text-muted">{{ product.description }}</small>
           </div>
-          <span class="text-muted">$12</span>
+          <span class="text-muted">${{ product.price }}</span>
         </li>
+        <li class="list-group-item d-flex justify-content-between lh-condensed" :key="i">
+          <div>
+            <h6 class="my-0">Quantity</h6>
+          </div>
+          <input class="text-muted form-control qty" type="number" min="0">
+        </li>
+        </template>
+
         <li class="list-group-item d-flex justify-content-between">
           <span>Total (USD)</span>
           <strong>$20</strong>
@@ -88,8 +97,22 @@
 
 <script>
 export default {
+  async asyncData({params, app}) {
+    const {data} = await app.$axios.$get(`links/${params.code}`)
+
+    return {
+        user: data.user,
+        products: data.products
+    }
+  },
   mounted() {
     console.log(this.$route.params)
   }
 }
 </script>
+
+<style scoped>
+.qty {
+    width: 65px;
+}
+</style>
