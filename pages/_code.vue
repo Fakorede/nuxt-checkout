@@ -12,14 +12,14 @@
       </h4>
       <ul class="list-group mb-3">
         <template v-for="(product, i) in products">
-        <li class="list-group-item d-flex justify-content-between lh-condensed" :key="i">
+        <li class="list-group-item d-flex justify-content-between lh-condensed" :key="'product_title' + i">
           <div>
             <h6 class="my-0">{{ product.title }}</h6>
             <small class="text-muted">{{ product.description }}</small>
           </div>
           <span class="text-muted">${{ product.price }}</span>
         </li>
-        <li class="list-group-item d-flex justify-content-between lh-condensed" :key="i">
+        <li class="list-group-item d-flex justify-content-between lh-condensed" :key="'product_quantity' + i">
           <div>
             <h6 class="my-0">Quantity</h6>
           </div>
@@ -36,15 +36,15 @@
     </div>
     <div class="col-md-8 order-md-1">
       <h4 class="mb-3">Personal Information</h4>
-      <form class="needs-validation" novalidate>
+      <form class="needs-validation" @submit.prevent="submit">
         <div class="row">
           <div class="col-md-6 mb-3">
             <label for="firstName">First name</label>
-            <input type="text" class="form-control" id="firstName" placeholder="First Name" required>
+            <input v-model="first_name" type="text" class="form-control" id="firstName" placeholder="First Name" required>
           </div>
           <div class="col-md-6 mb-3">
             <label for="lastName">Last name</label>
-            <input type="text" class="form-control" id="lastName" placeholder="Last Name" required>
+            <input v-model="last_name" type="text" class="form-control" id="lastName" placeholder="Last Name" required>
           </div>
         </div>
 
@@ -63,30 +63,30 @@
 
         <div class="mb-3">
           <label for="email">Email</label>
-          <input type="email" class="form-control" id="email" placeholder="you@example.com" required>
+          <input v-model="email" type="email" class="form-control" id="email" placeholder="you@example.com" required>
         </div>
 
         <div class="mb-3">
           <label for="address">Address</label>
-          <input type="text" class="form-control" id="address" placeholder="1234 Main St" required>
+          <input v-model="address" type="text" class="form-control" id="address" placeholder="1234 Main St" required>
         </div>
 
         <div class="mb-3">
           <label for="address2">Address 2 <span class="text-muted">(Optional)</span></label>
-          <input type="text" class="form-control" id="address2" placeholder="Apartment or suite">
+          <input v-model="address2" type="text" class="form-control" id="address2" placeholder="Apartment or suite">
         </div>
 
         <div class="row">
           <div class="col-md-5 mb-3">
-            <input type="text" class="form-control" id="country" placeholder="Country">
+            <input v-model="country" type="text" class="form-control" id="country" placeholder="Country">
           </div>
           <div class="col-md-4 mb-3">
             <label for="state">City</label>
-            <input type="text" class="form-control" id="city" placeholder="City">
+            <input v-model="city" type="text" class="form-control" id="city" placeholder="City">
           </div>
           <div class="col-md-3 mb-3">
             <label for="zip">Zip</label>
-            <input type="text" class="form-control" id="zip" placeholder="Zip code" required>
+            <input v-model="zip" type="text" class="form-control" id="zip" placeholder="Zip code" required>
           </div>
         </div>
         <button class="btn btn-primary btn-lg btn-block" type="submit">Continue to checkout</button>
@@ -98,8 +98,8 @@
 
 <script>
 export default {
-  async asyncData({params, app}) {
-    const {data} = await app.$axios.$get(`links/${params.code}`)
+  async asyncData({ $axios, params }) {
+    const {data} = await $axios.$get(`links/${params.code}`)
 
     return {
         user: data.user,
@@ -109,11 +109,16 @@ export default {
   data: () => ({
     user: null,
     products: [],
-    quantities: []
+    quantities: [],
+    first_name: '',
+    last_name: '',
+    email: '',
+    address: '',
+    address2: '',
+    country: '',
+    city: '',
+    zip: '',
   }),
-  mounted() {
-    console.log(this.$route.params)
-  },
   computed: {
     total() {
         let total = 0;
@@ -123,6 +128,29 @@ export default {
         });
 
         return total
+    }
+  },
+  methods: {
+    async submit() {
+        const {data} = await this.$axios.$post(`orders`, {
+            first_name: this.first_name,
+            last_name: this.last_name,
+            email: this.email,
+            address: this.address,
+            address2: this.address2,
+            country: this.country,
+            city: this.city,
+            zip: this.zip,
+            code: this.$route.params.code,
+            items: this.products.map((p) => {
+                return {
+                    product_id: p.id,
+                    quantity: this.quantities[p.id]
+                }
+            })
+        })
+
+        console.log(data)
     }
   }
 }
