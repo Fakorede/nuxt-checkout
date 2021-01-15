@@ -78,6 +78,7 @@
 
         <div class="row">
           <div class="col-md-5 mb-3">
+              <label for="state">Country</label>
             <input v-model="country" type="text" class="form-control" id="country" placeholder="Country">
           </div>
           <div class="col-md-4 mb-3">
@@ -89,7 +90,7 @@
             <input v-model="zip" type="text" class="form-control" id="zip" placeholder="Zip code" required>
           </div>
         </div>
-        <button class="btn btn-primary btn-lg btn-block" type="submit">Continue to checkout</button>
+        <button :disabled="loading" ref="submitBtn" class="btn btn-primary btn-lg btn-block" type="submit">{{ btnText }}</button>
       </form>
     </div>
   </div>
@@ -118,6 +119,8 @@ export default {
     country: '',
     city: '',
     zip: '',
+    loading: false,
+    btnText: 'Continue to Checkout'
   }),
   computed: {
     total() {
@@ -128,11 +131,14 @@ export default {
         });
 
         return total
-    }
+    },
   },
   methods: {
     async submit() {
-        const {data} = await this.$axios.$post(`orders`, {
+        this.loading = true;
+        this.$refs.submitBtn.innerHTML = this.loading ? 'loading...' : this.btnText
+
+        const {data} = await this.$axios.post(`orders`, {
             first_name: this.first_name,
             last_name: this.last_name,
             email: this.email,
@@ -150,7 +156,11 @@ export default {
             })
         })
 
-        console.log(data)
+        await this.$stripe.redirectToCheckout({
+            sessionId: data.id
+        });
+
+        this.loading = false;
     }
   }
 }

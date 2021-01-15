@@ -9,6 +9,11 @@
 
 <script>
     export default {
-        name: "Success"
+        name: "Success",
+        async mounted() {
+            const {data} = await this.$axios.post(`orders/confirm`, {
+                source: this.$route.query.source
+            })
+        }
     }
 </script>
