@@ -23,13 +23,14 @@
           <div>
             <h6 class="my-0">Quantity</h6>
           </div>
-          <input class="text-muted form-control qty" type="number" min="0">
+          <input v-model="quantities[product.id]" class="text-muted form-control qty" type="number" min="0">
         </li>
         </template>
 
         <li class="list-group-item d-flex justify-content-between">
           <span>Total (USD)</span>
-          <strong>$20</strong>
+          <strong v-if="total">${{ total }}</strong>
+          <strong v-else>$0</strong>
         </li>
       </ul>
     </div>
@@ -105,8 +106,24 @@ export default {
         products: data.products
     }
   },
+  data: () => ({
+    user: null,
+    products: [],
+    quantities: []
+  }),
   mounted() {
     console.log(this.$route.params)
+  },
+  computed: {
+    total() {
+        let total = 0;
+
+        this.products.forEach((p) => {
+            total += p.price * this.quantities[p.id]
+        });
+
+        return total
+    }
   }
 }
 </script>
