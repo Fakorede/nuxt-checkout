@@ -1,22 +1,41 @@
-# nuxt-checkout
+# Nuxt-Checkout
 
-> Checkout Application
+> This is a checkout form built with Nuxt.js and Stripe.
 
-## Build Setup
+
+![Checkout Form](assets/screenshots/checkout1.PNG?raw=true "Checkout Form")
+
+![Stripe Payment Page](assets/screenshots/checkout2.PNG?raw=true "Stripe Payment Page")
+
+![Success Page](assets/screenshots/checkout3.PNG?raw=true "Success Page")
+
+## Setup Instructions
 
 ``` bash
+# clone from repo
+$ git clone https://github.com/moshoodfakorede/nuxt-checkout
+
 # install dependencies
-$ yarn install
+$ cd nuxt-checkout
+$ npm install
 
-# serve with hot reload at localhost:3000
-$ yarn run dev
-
-# build for production and launch server
-$ yarn run build
-$ yarn start
-
-# generate static project
-$ yarn run generate
+# run project
+$ npm run dev
 ```
 
-For detailed explanation on how things work, checkout [Nuxt.js docs](https://nuxtjs.org).
+**NB:** The [Laravel API](https://github.com/moshoodfakorede/Laravel-Admin) also has to be setup locally and a code generated from the [User App](https://github.com/moshoodfakorede/Vue-Admin) has to be passed as a URL param for this application to work correctly.
+
+Ex: 
+
+```
+http://localhost:3000/3BuDnu
+```
+
+
+## Related Projects
+
+Laravel API - https://github.com/moshoodfakorede/Laravel-Admin
+
+Admin SPA - https://github.com/moshoodfakorede/Vue-Admin
+
+User SPA - https://github.com/moshoodfakorede/vue-influencer
